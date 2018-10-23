@@ -48,7 +48,7 @@
 
 #define VGAPPEND(str1,str2) str1##str2
  
-#if defined(VGO_linux) || defined(VGO_solaris)
+#if defined(VGO_linux) || defined(VGO_solaris) || defined(VGO_freebsd)
 #  define VG_(str)    VGAPPEND( vgPlain_,          str)
 #  define ML_(str)    VGAPPEND( vgModuleLocal_,    str)
 #elif defined(VGO_darwin)
@@ -62,7 +62,7 @@
    The call to MARK_STACK_NO_EXEC should be put unconditionally
    at the end of all asm source files.
 */
-#if defined(VGO_linux)
+#if defined(VGO_freebsd) || defined(VGO_linux)
 #  if defined(VGA_arm)
 #    define MARK_STACK_NO_EXEC .section .note.GNU-stack,"",%progbits
 #  else
