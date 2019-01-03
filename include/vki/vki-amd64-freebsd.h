@@ -221,4 +221,4 @@ struct vki_sigaction_base {
 typedef  struct vki_sigaction_base  vki_sigaction_toK_t;
 typedef  struct vki_sigaction_base  vki_sigaction_fromK_t;
 
-#endif /* __VKI_AMD64_FREEBSD_H */
+#endif // __VKI_AMD64_FREEBSD_H
