@@ -873,7 +873,7 @@ POST(sys_fstat)
 PRE(sys_fstat64)
 {
    PRINT("sys_fstat64 ( %ld, %#lx )", ARG1, ARG2);
-   PRE_REG_READ2(long, "fstat", unsigned long, fd, struct stat *, buf);
+   PRE_REG_READ2(long, "fstat", unsigned long, fd, struct stat64 *, buf);
    PRE_MEM_WRITE( "fstat(buf)", ARG2, sizeof(struct vki_stat64) );
 }
 
