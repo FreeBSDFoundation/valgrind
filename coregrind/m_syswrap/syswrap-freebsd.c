@@ -870,6 +870,18 @@ POST(sys_fstat)
    POST_MEM_WRITE( ARG2, sizeof(struct vki_stat) );
 }
 
+PRE(sys_fstat64)
+{
+   PRINT("sys_fstat64 ( %ld, %#lx )", ARG1, ARG2);
+   PRE_REG_READ2(long, "fstat", unsigned long, fd, struct stat *, buf);
+   PRE_MEM_WRITE( "fstat(buf)", ARG2, sizeof(struct vki_stat64) );
+}
+
+POST(sys_fstat64)
+{
+   POST_MEM_WRITE( ARG2, sizeof(struct vki_stat64) );
+}
+
 PRE(sys_pathconf)
 {
    PRINT("sys_pathconf ( %#lx(%s), %ld )",ARG1,(char *)ARG1,ARG2);
@@ -1011,6 +1023,26 @@ POST(sys_getdirentries)
       POST_MEM_WRITE( ARG2, RES );
       if ( ARG4 != 0 )
 	 POST_MEM_WRITE( ARG4, sizeof (long));
+   }
+}
+
+PRE(sys_getdirentries64)
+{
+   *flags |= SfMayBlock;
+   PRINT("sys_getdents ( %ld, %#lx, %ld )", ARG1,ARG2,ARG3);
+   PRE_REG_READ3(vki_ssize_t, "getdirentries",
+                 unsigned int, fd, struct dirent *, dirp,
+                 vki_size_t, count);
+   PRE_MEM_WRITE( "getdirentries(dirp)", ARG2, ARG3 );
+}
+
+POST(sys_getdirentries64)
+{
+   vg_assert(SUCCESS);
+   if (RES > 0) {
+      POST_MEM_WRITE( ARG2, RES );
+      if ( ARG4 != 0 )
+	 POST_MEM_WRITE( ARG4, sizeof (vki_off_t));
    }
 }
 
@@ -1234,6 +1266,19 @@ PRE(sys_fstatfs6)
 POST(sys_fstatfs6)
 {
    POST_MEM_WRITE( ARG2, sizeof(struct vki_statfs6) );
+}
+
+PRE(sys_fstatfs64)
+{
+   PRINT("sys_fstatfs64 ( %ld, %#lx )", ARG1, ARG2);
+   PRE_REG_READ2(long, "fstatfs6",
+                 unsigned int, fd, struct statfs *, buf);
+   PRE_MEM_WRITE( "fstatfs6(buf)", ARG2, sizeof(struct vki_statfs64) );
+}
+
+POST(sys_fstatfs64)
+{
+   POST_MEM_WRITE( ARG2, sizeof(struct vki_statfs64) );
 }
 
 PRE(sys_statfs6)
@@ -3119,6 +3164,20 @@ POST(sys_fstatat)
    POST_MEM_WRITE( ARG3, sizeof(struct vki_stat) );
 }
 
+PRE(sys_fstatat64)
+{
+   PRINT("sys_fstatat ( %ld, %#lx(%s), %#lx )", ARG1,ARG2,(char*)ARG2,ARG3);
+   PRE_REG_READ3(long, "fstatat",
+                 int, dfd, char *, file_name, struct stat *, buf);
+   PRE_MEM_RASCIIZ( "fstatat(file_name)", ARG2 );
+   PRE_MEM_WRITE( "fstatat(buf)", ARG3, sizeof(struct vki_stat) );
+}
+
+POST(sys_fstatat64)
+{
+   POST_MEM_WRITE( ARG3, sizeof(struct vki_stat) );
+}
+
 PRE(sys_unlinkat)
 {
    *flags |= SfMayBlock;
@@ -4425,6 +4484,12 @@ const SyscallTableEntry ML_(syscall_table)[] = {
    BSDXY(__NR_shmctl,			sys_shmctl),			// 512
    BSDXY(__NR_pselect,          sys_pselect),			// 522
    BSDXY(__NR_pipe2,			sys_pipe2),			// 542
+
+   // ino64
+   BSDXY(__NR_fstat64,			sys_fstat64),			// 551
+   BSDXY(__NR_fstatat64,		sys_fstatat64),			// 552
+   BSDXY(__NR_getdirentries64,		sys_getdirentries64),		// 554
+   GENXY(__NR_fstatfs64,		sys_fstatfs),   		// 556
 
    BSDX_(__NR_fake_sigreturn,		sys_fake_sigreturn),		// 1000, fake sigreturn
 
