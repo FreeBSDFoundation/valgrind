@@ -367,6 +367,38 @@ struct vki_stat {
 	unsigned int :(8 / 2) * (16 - (int)sizeof(struct vki_timespec));
 };
 
+struct vki_stat64 {
+	vki_uint64_t	st_dev;
+	vki_uint64_t	st_ino;
+	vki_uint64_t	st_nlink;
+	vki_mode_t	st_mode;
+        vki_int16_t     st_padding0;
+	vki_uid_t	st_uid;
+	vki_gid_t	st_gid;
+        vki_int32_t     st_padding1;
+	vki_uint64_t	st_rdev;
+#if 0
+	struct vki_timespec	st_atimespec;
+	struct vki_timespec	st_mtimespec;
+	struct vki_timespec	st_ctimespec;
+#else
+	vki_time_t	st_atime;
+	long		st_atime_nsec;
+	vki_time_t	st_mtime;
+	long		st_mtime_nsec;
+	vki_time_t	st_ctime;
+	long		st_ctime_nsec;
+#endif
+	vki_off_t	st_size;
+	vki_blkcnt_t	st_blocks;
+	vki_blksize_t	st_blksize;
+	vki_fflags_t	st_flags;
+	vki_uint64_t	st_gen;
+	vki_int64_t	st_spare[10];
+//	struct vki_timespec	st_birthtimespec;
+//	unsigned int :(8 / 2) * (16 - (int)sizeof(struct vki_timespec));
+//	unsigned int :(8 / 2) * (16 - (int)sizeof(struct vki_timespec));
+};
 
 //----------------------------------------------------------------------
 // From linux-2.6.8.1/include/linux/sched.h
@@ -940,6 +972,30 @@ struct vki_statfs {
 	char		f_mntonname[VKI_MNAMELEN];
 };
 
+struct vki_statfs64 {
+	vki_uint32_t	f_version;
+	vki_uint32_t	f_type;
+	vki_uint64_t	f_flags;
+	vki_uint64_t	f_bsize;
+	vki_uint64_t	f_iosize;
+	vki_uint64_t	f_blocks;
+	vki_uint64_t	f_bfree;
+	vki_int64_t	f_bavail;
+	vki_uint64_t	f_files;
+	vki_int64_t	f_ffree;
+	vki_uint64_t	f_syncwrites;
+	vki_uint64_t	f_asyncwrites;
+	vki_uint64_t	f_syncreads;
+	vki_uint64_t	f_asyncreads;
+	vki_uint64_t	f_spare[10];
+	vki_uint32_t	f_namemax;
+	vki_uid_t	f_owner;
+	vki_fsid_t	f_fsid;
+	char		f_charspare[80];
+	char		f_fstypename[VKI_MFSNAMELEN];
+	char		f_mntfromnname[VKI_MNAMELEN];
+	char		f_mntonname[VKI_MNAMELEN];
+};
 #define MAXFIDSZ        16
 
 struct vki_fid {
