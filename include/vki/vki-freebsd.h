@@ -389,6 +389,8 @@ struct vki_stat64 {
 	vki_time_t	st_ctime;
 	long		st_ctime_nsec;
 #endif
+	vki_time_t	st_birthtime;
+	long		st_birthtime_nsec;
 	vki_off_t	st_size;
 	vki_blkcnt_t	st_blocks;
 	vki_blksize_t	st_blksize;
