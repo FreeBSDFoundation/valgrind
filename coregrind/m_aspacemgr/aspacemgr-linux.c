@@ -1493,7 +1493,8 @@ static void init_nsegment ( /*OUT*/NSegment* seg )
    seg->mode     = 0;
    seg->offset   = 0;
    seg->fnIdx    = -1;
-   seg->hasR = seg->hasW = seg->hasX = seg->hasT = seg->isCH = False;
+   seg->hasR     = seg->hasW = seg->hasX = seg->hasT
+                 = seg->isCH = seg->isFF = False;
 }
 
 /* Make an NSegment which holds a reservation. */
@@ -2211,6 +2212,7 @@ VG_(am_notify_client_mmap)( Addr a, SizeT len, UInt prot, UInt flags,
       if (ML_(am_resolve_filename)(fd, buf, VKI_PATH_MAX)) {
          seg.fnIdx = ML_(am_allocate_segname)( buf );
       }
+      seg.isFF = (flags & VKI_MAP_FIXED);
    }
    add_segment( &seg );
    AM_SANITY_CHECK;
@@ -2452,6 +2454,7 @@ SysRes VG_(am_mmap_named_file_fixed_client_flags)
    } else if (ML_(am_resolve_filename)(fd, buf, VKI_PATH_MAX)) {
       seg.fnIdx = ML_(am_allocate_segname)( buf );
    }
+   seg.isFF = (flags & VKI_MAP_FIXED);
    add_segment( &seg );
 
    AM_SANITY_CHECK;
@@ -2762,6 +2765,7 @@ static SysRes VG_(am_mmap_file_float_valgrind_flags) ( SizeT length, UInt prot,
    if (ML_(am_resolve_filename)(fd, buf, VKI_PATH_MAX)) {
       seg.fnIdx = ML_(am_allocate_segname)( buf );
    }
+   seg.isFF = (flags & VKI_MAP_FIXED);
    add_segment( &seg );
 
    AM_SANITY_CHECK;

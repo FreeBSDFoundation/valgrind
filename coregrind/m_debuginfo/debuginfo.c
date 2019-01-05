@@ -1205,6 +1205,10 @@ ULong VG_(di_notify_mmap)( Addr a, Bool allow_SkFileV, Int use_fd )
    /* Ignore mappings with permissions we can't possibly be interested in. */
    if (!(is_rx_map || is_rw_map || is_ro_map))
       return 0;
+   /* Ignore non-fixed read-only mappings.  The dynamic linker may be
+    * mapping something for its own transient purposes. */
+   if (!seg->isFF && is_ro_map)
+      return 0;
 
    /* Peer at the first few bytes of the file, to see if it is an ELF */
    /* object file. Ignore the file if we do not have read permission. */
