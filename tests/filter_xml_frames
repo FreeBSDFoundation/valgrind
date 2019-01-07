@@ -1,4 +1,4 @@
-#! /usr/local/bin/perl
+#! /usr/bin/env perl
 
 # Remove certain <frame>.....</frame> records that are suspected to point
 # to some kind of system library. Those are
