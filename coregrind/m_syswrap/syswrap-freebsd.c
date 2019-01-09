@@ -2283,7 +2283,7 @@ PRE(sys__umtx_op)
    case VKI_UMTX_OP_SEM_WAKE:
       PRINT( "sys__umtx_op ( %#lx, SEM_WAKE, %ld, %#lx, %#lx)", ARG1, ARG3, ARG4, ARG5);
       PRE_REG_READ2(long, "_umtx_op_sem_wake",
-                    struct umutex *, obj, int, op);
+                    struct usem *, obj, int, op);
       PRE_MEM_READ( "_umtx_op_sem_wake(mutex)", ARG1, sizeof(struct vki_usem) );
       PRE_MEM_WRITE( "_umtx_op_sem_wake(mutex)", ARG1, sizeof(struct vki_usem) );
       break;
@@ -2300,6 +2300,24 @@ PRE(sys__umtx_op)
                     struct umutex *, obj, int, op, unsigned long, flags);
       PRE_MEM_READ( "_umtx_op_mutex_wake(mutex)", ARG1, sizeof(struct vki_umutex) );
       PRE_MEM_WRITE( "_umtx_op_mutex_wake(mutex)", ARG1, sizeof(struct vki_umutex) );
+      break;
+   case VKI_UMTX_OP_SEM2_WAIT:
+      PRINT( "sys__umtx_op ( %#lx, SEM2_WAIT, %ld, %#lx, %#lx)", ARG1, ARG3, ARG4, ARG5);
+      PRE_REG_READ5(long, "_umtx_op_sem2_wait",
+                    struct usem2 *, obj, int, op, unsigned long, id,
+                    void *, zero, struct vki_timespec *, timeout);
+      PRE_MEM_READ( "_umtx_op_sem2_wait(usem)", ARG1, sizeof(struct vki_usem2) );
+      PRE_MEM_WRITE( "_umtx_op_sem2_wait(usem)", ARG1, sizeof(struct vki_usem2) );
+      if (ARG5)
+	 PRE_MEM_READ( "_umtx_op_sem2_wait(umtx_time)", ARG5, sizeof(struct vki_umtx_time) );
+      *flags |= SfMayBlock;
+      break;
+   case VKI_UMTX_OP_SEM2_WAKE:
+      PRINT( "sys__umtx_op ( %#lx, SEM2_WAKE, %ld, %#lx, %#lx)", ARG1, ARG3, ARG4, ARG5);
+      PRE_REG_READ2(long, "_umtx_op_sem2_wake",
+                    struct usem2 *, obj, int, op);
+      PRE_MEM_READ( "_umtx_op_sem2_wake(mutex)", ARG1, sizeof(struct vki_usem2) );
+      PRE_MEM_WRITE( "_umtx_op_sem2_wake(mutex)", ARG1, sizeof(struct vki_usem2) );
       break;
    default:
       PRINT( "sys__umtx_op ( %#lx, %ld(UNKNOWN), %ld, %#lx, %#lx )", ARG1, ARG2, ARG3, ARG4, ARG5);
