@@ -3804,12 +3804,7 @@ POST(sys_cpuset_getaffinity)
         POST_MEM_WRITE( ARG5, ARG4 );
 }
 
-struct pselect_sized_sigset {
-    const vki_sigset_t *ss;
-    vki_size_t ss_len;
-};
 struct pselect_adjusted_sigset {
-    struct pselect_sized_sigset ss; /* The actual syscall arg */
     vki_sigset_t adjusted_ss;
 };
 
@@ -3836,29 +3831,16 @@ PRE(sys_pselect)
    if (ARG5 != 0)
       PRE_MEM_READ( "pselect(timeout)", ARG5, sizeof(struct vki_timeval) );
    if (ARG6 != 0) {
-      const struct pselect_sized_sigset *pss =
-          (struct pselect_sized_sigset *)(Addr)ARG6;
-      PRE_MEM_READ( "pselect(sig)", ARG6, sizeof(*pss) );
-      if (!ML_(safe_to_deref)(pss, sizeof(*pss))) {
+      vki_sigset_t *ss = (vki_sigset_t *)(Addr)ARG6;
+      PRE_MEM_READ( "pselect(sig)", ARG6, sizeof(*ss) );
+      if (!ML_(safe_to_deref)(ss, sizeof(*ss))) {
          ARG6 = 1; /* Something recognisable to POST() hook. */
       } else {
-         struct pselect_adjusted_sigset *pas;
-         pas = VG_(malloc)("syswrap.pselect.1", sizeof(*pas));
-         ARG6 = (Addr)pas;
-         pas->ss.ss = (void *)1;
-         pas->ss.ss_len = pss->ss_len;
-         if (pss->ss_len == sizeof(*pss->ss)) {
-            if (pss->ss == NULL) {
-               pas->ss.ss = NULL;
-            } else {
-               PRE_MEM_READ("pselect(sig->ss)", (Addr)pss->ss, pss->ss_len);
-               if (ML_(safe_to_deref)(pss->ss, sizeof(*pss->ss))) {
-                  pas->adjusted_ss = *pss->ss;
-                  pas->ss.ss = &pas->adjusted_ss;
-                  VG_(sanitize_client_sigmask)(&pas->adjusted_ss);
-               }
-            }
-         }
+         vki_sigset_t *adjss;
+         adjss = VG_(malloc)("syswrap.pselect.1", sizeof(*adjss));
+         *adjss = *ss;
+         VG_(sanitize_client_sigmask)(adjss);
+         ARG6 = (Addr)adjss;
       }
    }
 }
@@ -4506,7 +4488,7 @@ const SyscallTableEntry ML_(syscall_table)[] = {
 
    BSDXY(__NR___semctl,			sys___semctl),			// 510
    BSDXY(__NR_shmctl,			sys_shmctl),			// 512
-   BSDXY(__NR_pselect,          sys_pselect),			// 522
+   BSDXY(__NR_pselect,			sys_pselect),			// 522
    BSDXY(__NR_pipe2,			sys_pipe2),			// 542
 
    // ino64
