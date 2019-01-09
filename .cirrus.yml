@@ -28,4 +28,3 @@ debian_stable_task:
     - sh autogen.sh
     - ./configure
     - make
-  check_script: make regtest
