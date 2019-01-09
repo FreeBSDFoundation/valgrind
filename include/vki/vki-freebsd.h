@@ -2030,6 +2030,11 @@ struct vki_usem {
 	vki_uint32_t	flags;
 };
 
+struct vki_usem2 {
+	vki_uint32_t	count;
+	vki_uint32_t	flags;
+};
+
 struct vki_umtx_time {
 	struct vki_timespec	timeout;
 	vki_uint32_t		flags;
@@ -2059,7 +2064,11 @@ struct vki_umtx_time {
 #define	VKI_UMTX_OP_SEM_WAKE		20
 #define	VKI_UMTX_OP_NWAKE_PRIVATE	21
 #define	VKI_UMTX_OP_MUTEX_WAKE2		22
-#define	VKI_UMTX_OP_MAX			23
+#define	VKI_UMTX_OP_SEM2_WAIT		23
+#define	VKI_UMTX_OP_SEM2_WAKE		24
+#define	VKI_UMTX_OP_SHM			25
+#define	VKI_UMTX_OP_ROBUST_LISTS	26
+#define	VKI_UMTX_OP_MAX			26
 
 
 //----------------------------------------------------------------------
