@@ -1154,7 +1154,7 @@ HChar* find_buildid(DiImage* img, Bool rel_ok, Bool search_shdrs)
                ML_(img_get)(&note, img, (DiOffT)note_ioff, sizeof(note));
                DiOffT name_ioff = note_ioff + sizeof(ElfXX_Nhdr);
                DiOffT desc_ioff = name_ioff + ((note.n_namesz + 3) & ~3);
-               if (ML_(img_strcmp_c)(img, name_ioff, ELF_NOTE_GNU) == 0
+               if (ML_(img_strcmp_c)(img, name_ioff, "GNU") == 0
                    && note.n_type == NT_GNU_BUILD_ID) {
                   buildid = ML_(dinfo_zalloc)("di.fbi.1",
                                               note.n_descsz * 2 + 1);
@@ -1194,7 +1194,7 @@ HChar* find_buildid(DiImage* img, Bool rel_ok, Bool search_shdrs)
                DiOffT name_ioff = note_ioff + sizeof(ElfXX_Nhdr);
                DiOffT desc_ioff = name_ioff + ((note.n_namesz + 3) & ~3);
 
-               if (ML_(img_strcmp_c)(img, name_ioff, ELF_NOTE_GNU) == 0
+               if (ML_(img_strcmp_c)(img, name_ioff, "GNU") == 0
                    && note.n_type == NT_GNU_BUILD_ID) {
                   buildid = ML_(dinfo_zalloc)("di.fbi.2",
                                               note.n_descsz * 2 + 1);
